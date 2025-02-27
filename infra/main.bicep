@@ -67,6 +67,10 @@ module aks './core/host/aks.bicep' = {
   }
 }
 
+
+
+
+
 // App outputs
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId

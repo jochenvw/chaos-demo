@@ -26,3 +26,10 @@ sudo apt-get install -y kubectl
 
 # Verify the installation
 kubectl version --client
+
+
+
+
+# install Azure CLI + Azure Developer CLI
+curl -fsSL https://aka.ms/install-azd.sh | bash
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
