@@ -14,6 +14,17 @@ FlaskInstrumentor().instrument_app(app)
 
 LOGGING_INITIALIZED = False
 
+class CommonFieldsFilter(logging.Filter):
+    def __init__(self):
+        super().__init__()
+        # Get environment variables once during initialization
+        self.app_version = os.getenv('APP_VERSION', 'unknown')
+
+    def filter(self, record):
+        # Add common fields to every log record
+        record.app_version = self.app_version
+        return True
+
 def config_logging():
     try:
         # https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-enable?tabs=python
@@ -22,6 +33,9 @@ def config_logging():
             enable_live_metrics=True,
             instrumentation_options={"azure_sdk": {"enabled": True}, "flask": {"enabled": True}}
         )
+        # Get the logger and add our filter
+        logger = logging.getLogger("chaos-web")
+        logger.addFilter(CommonFieldsFilter())
     except Exception as e:
         print(f"Error: {e}")
 
@@ -60,17 +74,32 @@ def lookup():
         
         if response.status_code == 200:
             account_data = response.json()
+            # These fields will be automatically combined with our common fields
+            logger.info("Account lookup successful", extra={
+                'account_number': account_number,
+                'account_name': account_name,
+                'status_code': response.status_code
+            })
             return render_template('account_details.html', account=account_data)
         else:
-            print(f"Error: API returned status code {response.status_code}")
-            print(f"Response content: {response.text}")
-            logger.error(f"Error: API returned status code {response.status_code}")
+            # Log error with structured data
+            logger.error("Account lookup failed", extra={
+                'account_number': account_number,
+                'account_name': account_name,
+                'status_code': response.status_code,
+                'response_content': response.text
+            })
             return render_template('account_details.html', 
                                  error="Account not found or invalid input")
     
     except requests.exceptions.RequestException as e:
-        print(f"Error calling API service: {str(e)}")
-        logger.error(f"Error calling API service: {str(e)}")
+        # Log exception with structured data
+        logger.error("API service error", extra={
+            'account_number': account_number,
+            'account_name': account_name,
+            'error_type': type(e).__name__,
+            'error_message': str(e)
+        })
         return render_template('account_details.html', 
                              error="Service temporarily unavailable")
 

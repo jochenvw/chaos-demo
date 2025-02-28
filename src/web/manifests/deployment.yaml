@@ -32,6 +32,8 @@ spec:
               value: "chaos-web"
             - name: OTEL_TRACES_SAMPLER_ARG
               value: "1"
+            - name: OTEL_LOG_LEVEL
+              value: "trace"
           imagePullPolicy: Always
           resources:
             limits:
