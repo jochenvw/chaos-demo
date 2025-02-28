@@ -1,7 +1,7 @@
-Flask==2.2.2
+Flask
 gunicorn
-Werkzeug==2.2.2
-requests==2.28.1
+Werkzeug
+requests
 azure-monitor-opentelemetry
 opentelemetry-instrumentation-flask
 dotenv

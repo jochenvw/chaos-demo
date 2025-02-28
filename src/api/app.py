@@ -24,13 +24,15 @@ class CommonFieldsFilter(logging.Filter):
 
 def config_logging():
     try:
+        logging.basicConfig(level=logging.DEBUG)
         configure_azure_monitor(
             logger_name="chaos-api",
             enable_live_metrics=True,
-            instrumentation_options={"azure_sdk": {"enabled": True}, "flask": {"enabled": True}}
+            instrumentation_options={"azure_sdk": {"enabled": True}, "flask": {"enabled": True}, "requests": {"enabled": True}}
         )
         # Get the logger and add our filter
         logger = logging.getLogger("chaos-api")
+        logger.setLevel(logging.INFO)
         logger.addFilter(CommonFieldsFilter())
     except Exception as e:
         print(f"Error: {e}")
@@ -82,7 +84,7 @@ def get_account():
                 logger.info("Account found by name", extra={
                     'account_number': account['accountNumber'],
                     'account_name': account['accountHolder'],
-                    'lookup_type': 'account_name'
+                    'lookup_type': 'account_name' 
                 })
                 return jsonify(account)
     
@@ -91,7 +93,7 @@ def get_account():
         'account_name': account_name,
         'lookup_type': 'account_number' if account_number else 'account_name'
     })
-    return jsonify({"error": "Account not found"}), 404
+    return jsonify({"error": "Account not found"}), 204
 
 if __name__ == '__main__': 
     load_dotenv()

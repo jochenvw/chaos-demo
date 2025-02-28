@@ -27,14 +27,16 @@ class CommonFieldsFilter(logging.Filter):
 
 def config_logging():
     try:
-        # https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-enable?tabs=python
+        logging.basicConfig(level=logging.DEBUG)
+        # https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-enable?tabs=python        
         configure_azure_monitor(
             logger_name="chaos-web",
             enable_live_metrics=True,
-            instrumentation_options={"azure_sdk": {"enabled": True}, "flask": {"enabled": True}}
+            instrumentation_options={"azure_sdk": {"enabled": True}, "flask": {"enabled": True}, "requests": {"enabled": True}}
         )
         # Get the logger and add our filter
         logger = logging.getLogger("chaos-web")
+        logger.setLevel(logging.INFO)
         logger.addFilter(CommonFieldsFilter())
     except Exception as e:
         print(f"Error: {e}")
