@@ -15,8 +15,8 @@ spec:
         app: "api"
     spec:
       containers:
-        - name: node
-          image: criwjxfqayhhqse.azurecr.io/chaos-demo/api-chaos-demo:azd-deploy-1738157535
+        - name: api
+          image: criwjxfqayhhqse.azurecr.io/api-app:latest
           ports:
             - containerPort: 5000
           env:
@@ -26,6 +26,12 @@ spec:
               value: "1.0.0"
             - name: AZURE_CLIENT_ID
               value: ${AZURE_AKS_IDENTITY_CLIENT_ID}
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              value: InstrumentationKey=ec19d823-94a7-48a3-bd1b-23ae9dfb6ea4;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=a60da77e-8f52-47a3-9b94-b1d0b4140d55
+            - name: OTEL_SERVICE_NAME
+              value: "chaos-api"
+            - name: OTEL_TRACES_SAMPLER_ARG
+              value: "1"              
           imagePullPolicy: Always
           resources:
             limits:
@@ -35,6 +41,7 @@ spec:
               cpu: "100m"
               memory: "128Mi"
 
+---
 
 apiVersion: v1
 kind: Service

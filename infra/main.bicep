@@ -67,7 +67,28 @@ module aks './core/host/aks.bicep' = {
   }
 }
 
+// Log Analytics workspace for app monitoring
+module logAnalytics './core/monitor/loganalytics.bicep' = {
+  name: 'logs'
+  scope: rg
+  params: {
+    name: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    location: location
+    tags: tags
+  }
+}
 
+// Application Insights for monitoring application
+module applicationInsights './core/monitor/applicationinsights.bicep' = {
+  name: 'applogs'
+  scope: rg
+  params: {
+    location: location
+    tags: tags
+    logAnalyticsWorkspaceId: logAnalytics.outputs.id
+    name: '${abbrs.insightsComponents}${resourceToken}'
+  }
+}
 
 
 
@@ -81,3 +102,5 @@ output AZURE_AKS_CLUSTER_NAME string = aks.outputs.clusterName
 output AZURE_AKS_IDENTITY_CLIENT_ID string = aks.outputs.clusterIdentity.clientId
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = aks.outputs.containerRegistryLoginServer
 output AZURE_CONTAINER_REGISTRY_NAME string = aks.outputs.containerRegistryName
+output APPINSIGHTS_INSTRUMENTATIONKEY string = applicationInsights.outputs.instrumentationKey
+output APPLICATIONINSIGHTS_CONNECTION_STRING string = applicationInsights.outputs.connectionString

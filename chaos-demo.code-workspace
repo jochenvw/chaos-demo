@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "_root",
+			"path": "."
+		},
+		{
+			"name": "web app",
+			"path": "src/web"
+		},
+		{
+			"name": "api",
+			"path": "src/api"
+		}
+	]
+}

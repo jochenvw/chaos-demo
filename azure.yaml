@@ -8,11 +8,17 @@ services:
     dist: build
     language: python
     host: aks
+    docker:
+      image: web-app
+      tag: latest
   api:
     resourceName: chaos-cluster
     project: ./src/api
     language: python
     host: aks
+    docker:
+      image: api-app
+      tag: latest
     k8s:
       ingress:
         relativePath: api
